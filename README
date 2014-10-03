@@ -1,0 +1,4 @@
+This docker container runs Snort/Pulledpork with pf_ring. It is
+based on the hurricanelabs/pfring container. It must be run with
+the --privileged option, and the pf_ring kernel module must be
+loaded on the host.
