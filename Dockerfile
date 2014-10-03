@@ -82,6 +82,6 @@ ENV PATH /opt/snort/bin:$PATH
 RUN cp /usr/local/src/pulledpork-*/pulledpork.pl /opt/snort/bin && \
     chmod 0755 /opt/snort/bin/pulledpork.pl
 
-ADD entrypoint.sh /entrypoint.sh
+ADD docker-entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["snort"]
