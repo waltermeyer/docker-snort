@@ -18,6 +18,17 @@ if [ "$1" = "snort" ]; then
     PPDIR=/data/$INSTANCE/pulledpork
     PPCONFIG=$PPDIR/pulledpork.conf
 
+    if [[ $INTERFACE == zc:* ]]; then
+        # PF_RING ZeroCopy
+        if [ -n "$ZC_LICENSE" ]; then
+            mkdir -p /etc/pf_ring
+            echo $ZC_LICENSE_DATA > /etc/pf_ring/$ZC_LICENSE_MAC
+        fi
+
+        mkdir /mnt/huge
+        mount -t hugetlbfs nodev /mnt/huge
+    fi
+
     mkdir -p /var/lib/pulledpork
     cp /data/rules/* /var/lib/pulledpork
     mkdir -p /opt/snort/lib/snort_dynamicrules
