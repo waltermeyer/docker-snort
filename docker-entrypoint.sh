@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Expects:
 #   -e INTERFACE - sniffing interface ON THE HOST
