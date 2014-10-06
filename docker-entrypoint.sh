@@ -20,7 +20,7 @@ if [ "$1" = "snort" ]; then
 
     if [[ $INTERFACE == zc:* ]]; then
         # PF_RING ZeroCopy
-        if [ -n "$ZC_LICENSE" ]; then
+        if [ -n "$ZC_LICENSE_DATA" ]; then
             mkdir -p /etc/pf_ring
             echo $ZC_LICENSE_DATA > /etc/pf_ring/$ZC_LICENSE_MAC
         fi
