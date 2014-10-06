@@ -7,6 +7,8 @@
 #   -e OPTS - additional options to pass to snort
 #   -e HOMENET - to override HOME_NET setting in snort.conf
 
+source /zerocopy.sh
+
 if [ "$1" = "snort" ]; then
     LOGDIR=/data/$INSTANCE/logs/$HOSTNAME
     [ -d $LOGDIR ] || mkdir -p $LOGDIR
@@ -17,17 +19,6 @@ if [ "$1" = "snort" ]; then
 
     PPDIR=/data/$INSTANCE/pulledpork
     PPCONFIG=$PPDIR/pulledpork.conf
-
-    if [[ $INTERFACE == zc:* ]]; then
-        # PF_RING ZeroCopy
-        if [ -n "$ZC_LICENSE_DATA" ]; then
-            mkdir -p /etc/pf_ring
-            echo $ZC_LICENSE_DATA > /etc/pf_ring/$ZC_LICENSE_MAC
-        fi
-
-        mkdir /mnt/huge
-        mount -t hugetlbfs nodev /mnt/huge
-    fi
 
     mkdir -p /var/lib/pulledpork
     cp /data/rules/* /var/lib/pulledpork
