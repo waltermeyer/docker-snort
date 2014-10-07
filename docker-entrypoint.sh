@@ -9,6 +9,10 @@
 
 source /zerocopy.sh
 
+if [ -n "$PFRING_DAQ_MODULE_DNA" ]; then
+    /compile_pfring_dna_daq.sh
+fi
+
 if [ "$1" = "snort" ]; then
     LOGDIR=/data/$INSTANCE/logs/$HOSTNAME
     [ -d $LOGDIR ] || mkdir -p $LOGDIR
@@ -17,32 +21,15 @@ if [ "$1" = "snort" ]; then
     CONFIG=$CONFDIR/snort.conf
     RULES=$CONFDIR/rules
 
-    PPDIR=/data/$INSTANCE/pulledpork
-    PPCONFIG=$PPDIR/pulledpork.conf
-
-    mkdir -p /var/lib/pulledpork
-    cp /data/rules/* /var/lib/pulledpork
-    mkdir -p /opt/snort/lib/snort_dynamicrules
-    mkdir -p /opt/snort/rules
-
-    /opt/snort/bin/pulledpork.pl -n -P -v -T \
-        -c $PPCONFIG \
-        -m $CONFDIR/sid-msg.map \
-        -s /opt/snort/lib/snort_dynamicrules \
-        -L $RULES/local.rules,$RULES/hd.rules \
-        -o $RULES/snort.$HOSTNAME.rules \
-        -e $PPDIR/enablesid.conf \
-        -i $PPDIR/disablesid.conf \
-        -M $PPDIR/modifysid.conf \
-        -b $PPDIR/dropsid.conf \
-        -h $LOGDIR/pulledpork.log
-
-    rm -rf /var/lib/pulledpork
+    if [ -z "$DISABLE_PULLEDPORK" ]; then
+        /pulledpork.sh
+        OPTS="$OPTS -S RULES_FILE=snort.$HOSTNAME.rules"
+    fi
 
     [ -z "$HOMENET" ] || OPTS="$OPTS -S HOME_NET=$HOMENET"
     [ -z "$SENSOR_IP" ] || OPTS="$OPTS -S SENSOR_IP=$SENSOR_IP"
 
-    exec /opt/snort/bin/snort -m 027 -d -l $LOGDIR $OPTS -c $CONFIG -i $INTERFACE -S RULES_FILE=snort.$HOSTNAME.rules
+    exec /opt/snort/bin/snort -m 027 -d -l $LOGDIR $OPTS -c $CONFIG -i $INTERFACE
 fi
 
 exec "$@"
